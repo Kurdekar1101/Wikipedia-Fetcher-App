@@ -22,6 +22,7 @@ A simple Spring Boot application that fetches Wikipedia summaries using the Wiki
 ---
 
 ## Project Structure
+```bash
 Wikipedia-Fetcher-App/
 ├── src/
 │ ├── main/
