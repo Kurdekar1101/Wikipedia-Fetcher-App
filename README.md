@@ -35,6 +35,7 @@ Wikipedia-Fetcher-App/
 ├── pom.xml
 ├── .gitignore
 └── README.md
+```
 ---
 
 ## Prerequisites
