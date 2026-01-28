@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Wikipedia Fetcher</title>
+
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #f4f6f8;
+            padding: 40px;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: auto;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 10px;
+        }
+
+        input {
+            flex: 1;
+            padding: 12px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 12px 18px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #1976d2;
+            color: white;
+            border: none;
+            border-radius: 4px;
+        }
+
+        button:hover {
+            background-color: #155fa0;
+        }
+
+        /* 🔲 RESULT BLOCK */
+        .result-box {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 6px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .result-box h3 {
+            margin-top: 0;
+        }
+
+        .result-box img {
+            margin-top: 15px auto 0;
+            max-width: 250px;
+            display: block;
+            border-radius :20px;
+       
+        }
+
+        .error {
+            color: red;
+        }
+
+        .loading {
+            font-style: italic;
+            color: gray;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>WIKIPEDIA SEARCH</h2>
+
+    <div class="search-box">
+        <input type="text" id="query" placeholder="Search anything..." />
+        <button onclick="searchWiki()">Search</button>
+    </div>
+
+    <div id="result"></div>
+</div>
+
+<script>
+function searchWiki() {
+    const query = document.getElementById("query").value.trim();
+    const resultDiv = document.getElementById("result");
+
+    if (!query) {
+        resultDiv.innerHTML =
+            "<p class='error'>Please enter something to search.</p>";
+        return;
+    }
+
+    resultDiv.innerHTML =
+        "<p class='loading'>Loading results...</p>";
+
+    fetch("/api/search?query=" + encodeURIComponent(query))
+        .then(res => {
+            if (!res.ok) {
+                throw new Error("No result");
+            }
+            return res.json();
+        })
+        .then(data => {
+            resultDiv.innerHTML = `
+                <div class="result-box">
+                    <h3>${data.title}</h3>
+                    <p>${data.extract}</p>
+                    ${data.thumbnail ? `<img src="${data.thumbnail.source}">` : ""}
+                    <p>
+                        <a href="${data.content_urls.desktop.page}" target="_blank">
+                            Read more on Wikipedia
+                        </a>
+                    </p>
+                </div>
+            `;
+        })
+        .catch(() => {
+            resultDiv.innerHTML =
+                `<p class='error'>No Wikipedia page found for "${query}".</p>`;
+        });
+}
+</script>
+
+</body>
+</html>
